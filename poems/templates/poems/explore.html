@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Discover {% endblock %}
+{% block extrascript %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+{% endblock %}
+
+{% block rightMenu %} 
+    {% if not user.is_authenticated %}
+        <div class="item">
+            <div class="ui blue button">Create Account</div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+<div class="ui grid">    
+    <div style="margin: 0 auto; padding: 0 auto; height: auto; width: 700px;">
+        <h2>Discover</h2>
+        <div class="ui fluid three item secondary pointing menu" id="discoverTab">
+            <a class="item" data-tab="top-poems"><i class="ui crosshairs icon"></i> Top Poems</a>  
+            <a class="item" href="{% url 'new-poems' %}"><i class="ui tags icon"></i> New Poems</a>       
+            <a class="item" data-tab="topics"><i class="ui list icon"></i> Topics</a>
+        </div>        
+
+    <!-- Top Poems -->
+    <div class="ui tab" data-tab="top-poems" style="margin-bottom: 30px;"> 
+            {% for poem in top_poems %}      
+            <div class="ui fluid link card">
+            <a href="{% url 'poem' poem.poet poem.slug %}" class="content">
+                <div class="header">{{ poem.title }}</div>
+                <div class="description" style="margin-bottom: 15px; color: rgba(0,0,0,.44);">
+                    <p style="font-size: 12px; color: #404040;">In {{ poem.topic }}</p>
+                    <div>
+                        {% autoescape off %}
+                           {{ poem.content|truncatechars_html:100 }}
+                       {% endautoescape %}                                         
+                   </div>
+                </div>
+                <div class="ui list" style="font-size: 15px; margin-top: 30px;">
+                    <div class="item">
+                        {% if poem.poet.image %}
+                            <img class="ui circular image" src="{{ poem.poet.image }}" width="48px" height="48px">
+                        {% else %}
+                            <img class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                        {% endif %}
+                        <div class="content">
+                            <div class="header" style="font-size: medium;">{{ poem.poet.user.get_full_name }}</div>
+                            <span class="description" style="font-size: 11px;">@{{ poem.poet }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <div class="extra content">
+                <div class="left floated">
+                    <span style="font-size: 12px;">{{ poem.published_at|timesince }} ago</span>                            
+                </div>                
+                {% if poem in user.profile.bookmarks.all %}
+                    <i class="right floated bookmark icon js-unbookmarkBtn" data-unbookmark="{{ poem.pk }}" style="padding-right: 25px;"></i>
+                {% else %}
+                    <i class="right floated bookmark outline icon js-bookmarkBtn" data-bookmark="{{ poem.pk }}" style="padding-right: 25px;"></i>
+                {% endif %}
+            </div>
+        </div> 
+        {% empty %}
+            <div class="ui centered inline text loader" style="margin-top: 20px; margin-bottom: 20px;">Working on it...</div>
+            <div style="text-align: center; margin-top: 10px;">
+                <a class="ui blue tiny button" href="{% url 'explore' %}">
+                    Reload
+                </a>
+            </div>
+        {% endfor %}
+        <!-- </div> -->       
+    </div>   
+
+    <!-- New Poems  -->
+    <div class="ui tab" data-tab="/new-poems" style="margin-bottom: 30px;">  
+        {% for poem in new_poems %}      
+        <div class="ui fluid link card">
+        <a href="{% url 'poem' poem.poet poem.slug %}" class="content">
+            <div class="header">{{ poem.title }}</div>
+            <div class="description" style="margin-bottom: 15px; color: rgba(0,0,0,.44);">
+                <p style="font-size: 12px; color: #404040;">In {{ poem.topic }}</p>
+                <div>
+                    {% autoescape off %}
+                       {{ poem.content|truncatechars_html:100 }}
+                   {% endautoescape %}                                         
+               </div>
+            </div>
+            <div class="ui list" style="font-size: 15px; margin-top: 30px;">
+                <div class="item">
+                    {% if poem.poet.image %}
+                        <img class="ui circular image" src="{{ poem.poet.image }}" width="48px" height="48px">
+                    {% else %}
+                        <img class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                    {% endif %}
+                    <div class="content">
+                        <div class="header" style="font-size: medium;">{{ poem.poet.user.get_full_name }}</div>
+                        <span class="description" style="font-size: 11px;">@{{ poem.poet }}</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <div class="extra content">
+            <div class="left floated">
+                <span style="font-size: 12px;">{{ poem.published_at|timesince }} ago</span>                            
+            </div>            
+            {% if poem in user.profile.bookmarks.all %}
+                <i class="right floated bookmark icon js-unbookmarkBtn" data-unbookmark="{{ poem.pk }}" style="padding-right: 25px;"></i>
+            {% else %}
+                <i class="right floated bookmark outline icon js-bookmarkBtn" data-bookmark="{{ poem.pk }}" style="padding-right: 25px;"></i>
+            {% endif %}
+        </div>
+    </div> 
+    {% empty %} 
+        <div class="ui centered inline text loader" style="margin-top: 20px; margin-bottom: 20px;">Working on it...</div>
+        <div style="text-align: center; margin-top: 10px;">
+            <a class="ui blue tiny button" href="{% url 'explore' %}">
+                Reload
+            </a>
+        </div>
+    {% endfor %} 
+    </div>
+
+    <!-- Topics -->
+    <div class="ui tab" data-tab="topics" style="margin-bottom: 30px;"> 
+        <table class="ui celled fluid unstackable table" id="topicsTable">
+            <thead>
+                <tr>                    
+                    <th>Topic</th>
+                    <th>Poems</th>
+                </tr>
+            </thead>
+            <tbody>                                
+                {% for topic in topics %}
+                    <tr>                        
+                        <td>
+                            <a href="{% url 'topic' topic %}" style="text-decoration: underline;">{{ topic }}</a>            
+                        </td> 
+                        <td>
+                            {{ topic.poems.all.count }}
+                        </td>                       
+                    </tr>  
+                {% endfor %}                                                     
+            </tbody>
+        </table>         
+    </div>
+    </div>
+</div>   
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready( function () {        
+        //Init Tab
+        $('.menu .item')
+            .tab({
+                alwaysRefresh: true
+            });
+        
+        // Init DataTable
+        $('#topicsTable').dataTable({
+            "aaSorting": []
+        });
+
+        // Set tab url
+        $('#discoverTab .item').each(function() {
+            $(this).click(function() {
+                if (this.dataset.tab) {
+                    history.pushState(null, this.dataset.tab, this.dataset.tab);
+                } else {
+                    history.pushState(null, 'new-poems', 'new-poems');
+                }
+            });
+        });
+        
+        // Set Active
+        var setDefaultActive = function() {
+                var path = window.location.pathname;
+                var menuTab = $("#discoverTab a[href='" + path + "'], #discoverTab a[data-tab='" + path.split('/')[1] + "']");
+                    menuTab.addClass("active");
+                var tabContent = $("div[data-tab='" + path.split('/')[1] + "'], div[data-tab='" + path + "']");
+                    tabContent.addClass("active");
+            }
+            setDefaultActive()
+            window.onpopstate = e => {
+                window.location.reload(); 
+            };       
+        
+    });
+</script>   
+{% endblock %}

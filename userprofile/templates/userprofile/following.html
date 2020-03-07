@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} @{{ user_profile.username }} Profile {% endblock %}
+
+{% block rightMenu %} 
+    {% if not request.user.is_authenticated %}
+        <div class="item">
+            <a href="{% url 'account_login' %}">Login</a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+<div class="ui grid">    
+    <div style="margin: 0 auto; padding: 0 auto; height: auto; width: 700px;">
+        <div class="ui grid" style="padding:0px; align-items: center; margin: 1rem 0;">
+            <a class="circular ui basic icon button" href="{% url 'profile' user_profile.username %}">
+                <i class="arrow left icon"></i>
+            </a>
+            <div class="user_details">
+                <h2 style="margin-bottom: 0px; padding: 0px; font-size: 19px; color: rgba(0,0,0,.87);">{{ user_profile.get_full_name }}</h2>
+                <span style="color: rgba(0, 0, 0, 0.54); padding-top: 0px; margin-top:0px; font-size: small;">@{{ user_profile.username }}</span>
+            </div>
+        </div>   
+        <div class="ui divider" style="margin-top: 0px;"></div> 
+
+        <div class="ui secondary pointing fluid two item menu" id="followTab">
+            <a class="item" data-tab="followers">Followers</a>
+            <a class="item" data-tab="following">Following</a>        
+        </div>
+        <div class="ui tab" data-tab="followers"> 
+            <!-- Follows List -->
+            <div class="ui middle aligned divided selection list">
+                <!-- User Following List -->
+                {% for follower in followers %}
+                <div class="item">
+                    <div class="right floated content">
+                        {% if follower.user.id != user.id %}
+                            {% if follower in my_following %}
+                                <div class="ui mini blue button js-unfollow_btn" data-unfollow="{{ follower.id }}">Unfollow</div>
+                            {% else %}
+                                <div class="ui mini basic follow button js-follow_btn" data-follow="{{ follower.id }}">Follow</div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <img class="ui avatar image" src="{% static 'images/avi.JPG' %}">
+                    <a href="{% url 'profile' follower.user.username %}" class="content">                    
+                        <div class="header">{{ follower.user.get_full_name }}</div>
+                        <span style="color: rgba(0,0,0,.54);">@{{ follower.user.username }}</span>                         
+                        {% if follower in my_followers %}  
+                            <div class="ui mini label follows_you">                                     
+                                Follows you
+                            </div>
+                        {% endif %}                      
+                    </a>                  
+                    <a href="{% url 'profile' follower.user.username %}" class="description" style="padding-left: 45px; padding-top: 5px;">
+                        {{ follower.bio|truncatewords:10 }}
+                    </a>
+                </div>
+                {% empty %}
+                    <div style="text-align: center;">
+                        No followers yet. Check out explore for some amazing poems.
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <a class="ui blue tiny button" href="{% url 'explore' %}">
+                            Explore
+                        </a>
+                    </div>
+                {% endfor %} 
+                <!-- User Following List ends here -->
+            </div>
+            <!-- Follows List ends here -->
+        </div>
+        <div class="ui tab" data-tab="following">  
+            <!-- Follows List -->
+            <div class="ui middle aligned divided selection list">
+                <!-- User Following List -->
+                {% for following in followings %}
+                <div class="item">
+                    <div class="right floated content">
+                        {% if following.user.id != user.id %} 
+                            {% if following in my_following %}
+                                <div class="ui mini blue button js-unfollow_btn" data-unfollow="{{ following.id }}">Unfollow</div>
+                            {% else %}
+                                <div class="ui mini basic follow button js-follow_btn" data-follow="{{ following.id }}">Follow</div>
+                            {% endif %}
+                        {% endif %}
+                    </div>                    
+                    <img class="ui avatar image" src="{% static 'images/avi.JPG' %}">
+                    <a href="{% url 'profile' following.user.username %}" class="content" href="{% url 'profile' following.user.username %}">                    
+                        <div class="header full_name">{{ following.user.get_full_name }} </div>
+                        <span style="color: rgba(0,0,0,.54);">@{{ following.user.username }}</span> 
+                            {% if following in my_followers %}  
+                                <div class="ui mini label follows_you">                                     
+                                    Follows you
+                                </div>
+                            {% endif %}
+                    </a>                  
+                    <a href="{% url 'profile' following.user.username %}" class="description" style="padding-left: 45px; padding-top: 5px;">
+                        {{ following.bio|truncatewords:15 }}
+                    </a>
+                </div>
+                {% empty %}
+                    <div style="text-align: center;">
+                        Not following anyone yet. Check out explore for some amazing poems.
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <a class="ui blue tiny button" href="{% url 'explore' %}">
+                            Explore
+                        </a>
+                    </div>
+                {% endfor %} 
+                <!-- User Following List ends here -->
+            </div> 
+        </div>
+    </div>
+</div>  
+<script>
+    $(document).ready( function () {
+        //Init Tab
+        $('.menu .item')
+            .tab();
+        
+        // Set tab url
+        $('#followTab .item').each(function() {
+            $(this).click(function() {
+                history.pushState(null, this.dataset.tab, this.dataset.tab);
+            });
+        });
+        
+        // Set Active
+        var setDefaultActive = function() {
+                var path = window.location.pathname.split("/")[2];
+                var menuTab = $("#followTab a[data-tab='" + path + "']");
+                menuTab.addClass("active");
+                var tabContent = $("div[data-tab='" + path + "']");
+                tabContent.addClass("active");
+            }
+            setDefaultActive()
+            window.onpopstate = e => {
+                window.location.reload(); 
+            };
+        
+    });
+</script>  
+{% endblock %}

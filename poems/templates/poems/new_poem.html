@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %} Publish a Poem {% endblock %}
+
+{% block body %}
+
+<div class="ui grid">    
+    <div style="margin: 0 auto; padding: 0 auto; height: auto; width: 700px;">  
+        <form class="ui form new_poem_form" style="margin-top: 30px; margin-bottom: 30px;" method="POST">
+            {{ form.non_field_errors }}
+            {% csrf_token %}
+            <h4 class="ui dividing header">Write Poem</h4>            
+            <div class="required field">
+                {{ form.topic.errors }}
+                <label>{{ form.topic.label }}</label>
+                {{ form.topic }}
+            </div>
+            <div class="ui divider"></div>
+            <div class="field" style="margin-top: 30px;">
+                {{ form.title.errors }}
+                <label>{{ form.title.label }}</label>
+                {{ form.title }}
+            </div>            
+            <div class="field">
+                {{ form.content.errors }}
+                <label>{{ form.content.label }}</label>                 
+                    {{ form.content }}                 
+                <div id="editor"></div>
+            </div>
+            <button type="submit" class="ui blue fluid button" id="publish">Publish Poem</button>
+        </form>
+    </div>
+</div>  
+<script src="https://cdn.tiny.cloud/1/ygyrfpauz3ccxd3h24izu9n92nbsxc5qowd8b5l1620x6bi5/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    $(document).ready(function() {
+        $('.ui.dropdown')
+        .dropdown();
+        
+    tinymce.init({
+        selector: 'textarea',
+        menubar: 'file'      
+    });
+});
+</script>
+{% endblock %}

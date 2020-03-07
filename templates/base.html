@@ -1,0 +1,146 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">  
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <!-- <link rel="stylesheet" href=" {% static 'style/semantic.min.css' %}"> -->
+    <link rel="stylesheet" href=" {% static 'style/style.css' %}" type="text/css">
+    <!-- <script src=" {% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src=" {% static 'js/semantic.min.js' %}"></script> -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>    
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extrascript %} {% endblock %}
+
+    <title>Poesy - {% block title %} {% endblock %}</title>
+    {% block style %}{% endblock %}
+</head>
+<body>
+    <div class="ui borderless fixed top menu" style="border-radius: 0px;">
+        <div class="ui container">
+            <div class="header item">
+                <a href="/"><img class="ui image" src="{% static 'images/logo.png' %}" alt="Logo" width="auto" height="35px" id="logo"></a>
+            </div>
+            <div class="right menu">                
+                {% if user.is_authenticated %}
+                <div class="item">
+                    <a href="{% url 'add_poem' %}"><i class="edit outline icon"></i></a>                      
+                </div>
+                <div class="item">
+                    <a href="{% url 'explore' %}"><i class="compass icon"></i></a>
+                </div>
+                <div class="item">
+                    <a href="{% url 'search' %}"><i class="search icon"></i></a>
+                </div>
+                <div class="item">
+                    <div class="ui pointing top right dropdown profiledropdown">
+                        {% if user.profile.image %}
+                            <img style="margin-right: 1.14286em;" class="ui circular image small-avatar" src="{{ user.profile.image }}" width="32px" height="32px">   
+                        {% else %}    
+                            <img style="margin-right: 1.14286em;" class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="32px" height="32px">
+                        {% endif %}                        
+                        <div class="menu">
+                            <div class="header" style="text-transform:none;"> 
+                                <a href="{% url 'profile' user.username %}">
+                                    <h5 style="margin-bottom: 0px;">{{ user.get_full_name }}</h5>
+                                    <p style="color: rgba(0,0,0,.44);">@{{ user.username }}</p>
+                                </a>
+                            </div>                             
+                            <div class="divider"></div>
+                            <a href="{% url 'add_poem' %}" class="item">
+                                Write a poem
+                            </a>
+                            <a href="{% url 'bookmarks' user.username %}" class="item">
+                                My Bookmarks
+                            </a>
+                            <a class="item" href="{% url 'edit_profile' %}">                                 
+                                Settings
+                            </a>                             
+                            <a class="item" href="{% url 'contact' %}">
+                                Submit Feedback
+                            </a>  
+                            <a class="item" id="logout_btn">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Logout Modal -->
+                    <div class="ui tiny modal">
+                        <i class="close icon"></i>
+                        <div class="header">
+                            Logout
+                          </div>
+                        <div class="content">
+                            <p>Are you sure you want to logout?</p>
+                        </div>
+                        <div class="actions">
+                            <div class="ui negative button">
+                              No
+                            </div>                             
+                            <form method="POST" action="{% url 'account_logout' %}" class="ui button" style="background: none;">
+                                {% csrf_token %}
+                                {% if redirect_field_value %}
+                                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                                {% endif %}
+                                <button type="submit" class="ui positive right labeled icon button">
+                                    {% trans 'Yes' %}
+                                    <i class="checkmark icon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Logout Model Ends -->
+                    {% endif %}
+                </div>
+                {% block rightMenu %}                    
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <div class="ui container" style="margin-top: 90px;" id="messageBox">
+        {% if messages %}  
+            {% for message in messages %}      
+            <div class="ui message {% if message.tags %} {{ message.tags }} {% endif %}">
+                <i class="close icon"></i>     
+                {{ message }} 
+            </div>
+            {% endfor %}
+        {% endif %} 
+        {% block body %}{% endblock %}
+    </div>  
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.profiledropdown')
+            .dropdown();
+
+        $('.message .success')
+            .fadeOut(5000);
+
+        $(document).on('click', '.message .close', function(){
+            $(this)
+                .closest('.message')
+                .transition('fade');
+        });
+        
+        $("#logout_btn").click(function(){
+            $(".tiny.modal").modal('show');
+        });
+        $(".tiny.modal").modal({
+            closable: true
+        });
+
+        $('.shareIcon')
+            .dropdown({
+            direction: 'upward'
+        });
+    });
+</script>
+</body>
+</html>

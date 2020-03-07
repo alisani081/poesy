@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load i18n %}
+
+{% block title %} Login {% endblock %} 
+
+{% block rightMenu %} 
+  <div class="item" style="margin-right: 1.14286em;">
+      <a href="{% url 'account_signup' %}" class="ui blue mini button">Create Account</a>
+  </div>
+{% endblock %}
+
+{% block body %}
+
+<div class="ui grid stackable container">        
+  <div class="nine wide column computer tablet only"> 
+      <div>  
+          <img src="{% static 'images/login_illustration.png' %}" alt="Illustration">
+      </div>
+    </div>    
+  <div class="seven wide column">
+        <div class="content" style="text-align: center;">
+        <h1>Login</h1>
+        <div class="description">
+            Poesy Greatness awaits you...
+        </div>
+        <div class="ui divider"></div>
+        <div class="column">             
+          <form class="ui form" method="POST" action="{% url 'account_login' %}"> 
+            {{ form.non_field_errors }}
+            {% csrf_token %}
+            {% for field in form %}
+              {% if field.label == 'Login' or field.label == 'Password' %}
+                <div class="field">                                
+                    {{field.errors}}                          
+                    <div class="ui left icon input {% if field.errors %}error{% endif %}">    
+                        {{field}}   
+                        {% if field.label == 'Password' %}
+                          <i class="lock icon"></i>
+                        {% elif field.label == 'Login' %}
+                          <i class="user icon"></i>  
+                        {% endif %}                        
+                    </div>
+                </div>
+                {% else %}
+                  <div class="ui left input checkbox" style="float: left; padding-bottom: 15px; display: block;">
+                    {{ field }}
+                    <label style="text-align: left;">{{ field.label }}</label>
+                  </div>
+                {% endif %}
+            {% endfor %}            
+            <button class="ui fluid blue submit button">Login</button>
+            {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}           
+            <input type="hidden" name="referer" value="{{ request.META.HTTP_REFERER }}">                
+        </form>
+        <div style="text-align: right; padding-top: 10px;">
+          <a href="{% url 'account_reset_password' %}" style="color:#525272; text-decoration:underline;">Forgot password?</a>
+        </div>
+        <div class="ui horizontal divider">OR</div> 
+            <p>
+              <a href="{# provider_login_url 'facebook' method='oauth2' #}" class="ui fluid facebook button">
+                <i class="facebook icon"></i>
+                Continue with Facebook
+              </a>               
+            </p>
+            <p>               
+              <a href="{# provider_login_url 'google' process='login' #}" class="ui google plus fluid button">
+                <i class="google icon"></i>
+                Login with Google
+              </a>
+            </p>             
+            <div class="description" style="padding-top: 10px;">
+                <p>
+                    Don't have an account?
+                    <a href="{% url 'account_signup' %}">Sign up</a>
+                </p>                           
+            </div>
+        </div>                    
+      </div>
+  </div>
+</div>
+{% endblock %}

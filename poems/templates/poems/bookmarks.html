@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} My Bookmarks {% endblock %}
+
+{% block body %}
+
+<div class="ui grid">        
+    <div id="timeline" style="margin-top: 20px; width: 100%;">
+        <h2>My Bookmarks</h2>
+        <div class="ui three stackable link cards" style="margin-top: 20px;">
+            {% for poem in user.profile.bookmarks.all %}
+            <!-- Poem Cards -->
+                <div class="card js-card" data-remove="{{ poem.pk }}">
+                    <a href="{% url 'poem' poem.poet poem.slug %}" class="content">
+                        <div class="header" style="padding-left: .75em;">{{ poem.title }}</div>
+                        <div class="description" style="margin-bottom: 15px; color: rgba(0,0,0,.44); padding-left: 1em;">
+                            <span style="font-size: 12px; color: #404040;">In {{ poem.topic }}</span>
+                            <div>
+                                {% autoescape off %}
+                                    {{ poem.content|truncatechars_html:100 }}
+                                {% endautoescape %}                                         
+                            </div>
+                        </div>
+                        <div class="ui list" style="font-size: 15px; margin-top: 30px;">
+                            <div class="item" style="padding-left: 1em;">
+                                {% if poem.poet.image %}
+                                    <img class="ui circular image" src="{{ poem.poet.image }}" width="48px" height="48px">
+                                {% else %}
+                                    <img class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                                {% endif %}
+                                <a class="content" href="{% url 'profile' poem.poet %}">
+                                    <div class="header" style="font-size: medium;">{{ poem.poet.user.get_full_name }}</div>
+                                    <span class="description" style="font-size: 11px;">@{{ poem.poet }}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="extra content">
+                        <div class="left floated">
+                            <span style="font-size: 12px;">{{ poem.published_at|timesince }} ago</span>                            
+                        </div>                        
+                        <i class="right floated bookmark icon js-removeBtn" data-unbookmark="{{ poem.pk }}" style="padding-right: 25px;"></i>                                                   
+                    </div>
+                </div>
+            {% empty %}   
+                <div class="card" style="width: 700px; margin: 0 auto; text-align: center; border: none; background: none;">
+                    <div class="ui info message">
+                        You haven't bookmarked any poem.
+                    </div>                            
+                </div>                 
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

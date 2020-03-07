@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+{% load socialaccount %}
+{% block title %} @{{ user_profile.username }} Profile {% endblock %}
+{% block style %}
+<style>
+div.ui.mini.button {
+    margin-top: -140px; 
+    float: right;
+}
+</style>
+{% endblock %}
+
+{% block rightMenu %} 
+    {% if not request.user.is_authenticated %}
+    <a href="{% url 'account_signup' %}" class="item">Sign up</a>
+    <a href="{% url 'account_login' %}" class="item" style="margin-right: 1.14286em;">Login</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+<div class="ui grid">    
+    <div style="margin: 0 auto; padding: 0 auto; height: auto; width: 700px;">
+        <div class="ui" id="profileCard" style="margin-top: 30px;"> 
+            {% if user_profile.profile.image %}
+                <img class="ui circular image" src="{{ user_profile.profile.image }}" id="profile-pic">   
+            {% else %}    
+                <img class="ui circular image" src="{% static 'images/default_avatar.png' %}" id="profile-pic">
+            {% endif %}     
+            <div class="content" style="padding-left: 0px; height: auto;"> 
+                <div style="margin-bottom: 4px;"> 
+                    <div>
+                        <span style="font-size: 1.7rem; display: inline-block;" class="head">{{ user_profile.get_full_name }}</span><br/>
+                        <span style="color: rgba(0, 0, 0, 0.54);"> 
+                            @{{ user_profile.username }} 
+                            {% if user.is_authenticated %}
+                                {% if user_profile.profile in user.profile.followed_by.all  %}  
+                                    <div class="ui mini label follows_you">                                     
+                                        Follows you
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if user.is_authenticated %}
+                        {% if user.id == user_profile.id %}
+                            <a href="{% url 'edit_profile' %}" style="margin-top: -140px; line-height: 0.2; float: right;" class="ui primary blue mini button">Edit profile</a> 
+                        {% elif user_profile.profile in user.profile.follows.all %}
+                            <div class="ui mini blue button" data-unfollow="{{ user_profile.profile.id }}" id="js-unfollow-profile">Unfollow</div>
+                        {% else %}
+                            <div class="ui mini basic follow button" data-follow="{{ user_profile.profile.id }}" id="js-follow-profile">Follow</div> 
+                        {% endif %}
+                    {% endif %}
+                </div>                    
+                <div class="description" style="line-height: 1.6;">
+                    {{ user_profile.profile.bio }}
+                </div>
+                <div style="color: rgba(0, 0, 0, 0.54); padding: 5px 0px 5px 0px;">
+                    <i class="map marker alternate icon"></i> {{ user_profile.profile.location }}
+                </div>
+            </div> 
+        </div>
+        <div class="ui horizontal list" style="margin-top: 13px;" id="profile_follows">
+            <a class="item follows" style="cursor:auto;"><b style="color: #404040;">{{user_profile.profile.poems.count}}</b> Poems</a>
+            <a class="item follows" href="{% url 'following' user_profile.username %}"><b style="color: #404040;">{{ following }}</b> Following</a>
+            <a class="item follows" href="{% url 'followers' user_profile.username %}"><b style="color: #404040;">{{ followers }}</b> Followers</a>
+        </div>
+        <div class="ui fluid two item secondary pointing menu">
+            <a class="active item" data-tab="poems">Poems</a>
+            <a class="item" data-tab="likes">Likes</a>         
+        </div>
+        <div class="ui active tab" data-tab="poems">  
+            <div style="padding-top: 20px; margin-bottom: 30px;">
+                {% for poem in user_profile.profile.poems.all %} 
+                        <div class="ui fluid link card">
+                            <a href="{% url 'poem' poem.poet poem.slug %}" class="content">
+                                <div class="header" style="padding-left: .75em;">{{ poem.title }}</div>
+                                <div class="description" style="margin-bottom: 15px; color: rgba(0,0,0,.44); padding-left: 1em;">
+                                    <span style="font-size: 12px; color: #404040;">In {{ poem.topic }}</span>
+                                    <div>
+                                        {% autoescape off %}
+                                            {{ poem.content|truncatechars_html:100 }}
+                                        {% endautoescape %}                                         
+                                    </div>
+                                </div>
+                                <div class="ui list" style="font-size: 15px; margin-top: 30px;">
+                                    <div class="item" style="padding-left: 1em;">
+                                        {% if poem.poet.image %}
+                                            <img class="ui circular image" src="{{ poem.poet.image }}" width="48px" height="48px">
+                                        {% else %}
+                                            <img class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                                        {% endif %}
+                                        <div class="content">
+                                            <div class="header" style="font-size: medium;">{{ poem.poet.user.get_full_name }}</div>
+                                            <span class="description" style="font-size: 11px;">@{{ poem.poet }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="extra content">
+                                <div class="left floated">
+                                    <span style="font-size: 12px;">{{ poem.published_at|timesince }} ago</span>                            
+                                </div>                                
+                                {% if user.is_authenticated %}
+                                    {% if poem in user.profile.bookmarks.all %}
+                                        <a><i class="right floated bookmark icon js-unbookmarkBtn" data-unbookmark="{{ poem.pk }}" style="padding-right: 25px;"></i></a>
+                                    {% else %}
+                                        <a><i class="right floated bookmark outline icon js-bookmarkBtn" data-bookmark="{{ poem.pk }}" style="padding-right: 25px;"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                {% empty %}   
+                    <div class="card" style="width: 700px; margin: 0 auto; text-align: center; border: none;">
+                        <p style="padding: 20px 0 20px 0;">
+                            @{{user_profile.username}} haven't published a poem yet.
+                        </p>                            
+                    </div>                 
+                {% endfor %}
+            </div> 
+            <!-- Cards end here -->
+        </div>
+        <div class="ui tab" data-tab="likes"> 
+            <div style="padding-top: 20px; margin-bottom: 30px;">
+                {% for poem in user_profile.profile.likes.all %} 
+                        <div class="ui fluid link card">
+                            <a href="{% url 'poem' poem.poet poem.slug %}" class="content">
+                                <div class="header" style="padding-left: .75em;">{{ poem.title }}</div>
+                                <div class="description" style="margin-bottom: 15px; color: rgba(0,0,0,.44); padding-left: 1em;">
+                                    <span style="font-size: 12px; color: #404040;">In {{ poem.topic }}</span>
+                                    <div>
+                                        {% autoescape off %}
+                                            {{ poem.content|truncatechars_html:100 }}
+                                        {% endautoescape %}                                         
+                                    </div>
+                                </div>
+                                <div class="ui list" style="font-size: 15px; margin-top: 30px;">
+                                    <div class="item" style="padding-left: 1em;">
+                                        {% if poem.poet.image %}
+                                            <img class="ui circular image" src="{{ poem.poet.image }}" width="48px" height="48px">
+                                        {% else %}
+                                            <img class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                                        {% endif %}
+                                        <div class="content">
+                                            <div class="header" style="font-size: medium;">{{ poem.poet.user.get_full_name }}</div>
+                                            <span class="description" style="font-size: 11px;">@{{ poem.poet }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="extra content">
+                                <div class="left floated">
+                                    <span style="font-size: 12px;">{{ poem.published_at|timesince }} ago</span>                            
+                                </div>                                
+                                {% if user.is_authenticated %}
+                                    {% if poem in user.profile.bookmarks.all %}
+                                        <a><i class="right floated bookmark icon js-unbookmarkBtn" data-unbookmark="{{ poem.pk }}" style="padding-right: 25px;"></i></a>
+                                    {% else %}
+                                        <a><i class="right floated bookmark outline icon js-bookmarkBtn" data-bookmark="{{ poem.pk }}" style="padding-right: 25px;"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                {% empty %}   
+                    <div class="card" style="width: 700px; margin: 0 auto; text-align: center; border: none;">
+                        <p style="padding: 20px 0 20px 0;">
+                            @{{user_profile.username}} haven't published a poem yet.
+                        </p>                            
+                    </div>                 
+                {% endfor %}
+            </div> 
+            <!-- Cards end here -->
+        </div>
+    </div>
+</div>  
+<script>
+    $(document).ready( function () {
+        $('.menu .item')
+            .tab()        
+    });
+</script>  
+{% endblock %}

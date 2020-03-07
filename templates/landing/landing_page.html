@@ -1,0 +1,81 @@
+{% extends 'landing/landing_base.html' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+<div class="welcome-header"> 
+  <div class="ui text container">
+    <h1 class="ui welcome header">Welcome to Poesy!</h1>
+    <h2>Publish your poems and engage with poetry enthusiasts, for free.</h2>
+    <a class="ui huge brand-btn button" href="{% url 'account_signup' %}">Get Started <i class="right arrow icon"></i></a>
+  </div>  
+</div>
+
+<div class="ui container" style="text-align: center; margin-top: 3em;">
+  <div class="ui large very relaxed horizontal list">
+    <div class="item">
+      <i class="check circle icon"></i>
+      Undiscovered Poets and Peoms  
+    </div>
+    <div class="item">
+      <i class="check circle icon"></i>
+      Avid Readers        
+    </div>
+    <div class="item">
+      <i class="check circle icon"></i>
+      Your Favorite Topics        
+    </div>
+  </div>
+</div>
+<div class="ui horizontal divider" style="margin-top: 5em;">Features</div>
+<div class="ui vertical stripe segment">
+  <div class="ui middle aligned stackable grid container">
+    <div class="row">
+        <div class="four wide column">
+          <h2 class="ui header">
+            <i class="edit icon"></i>
+            <div class="content">
+              Write
+              <div class="sub header">Publish your orignial work</div>
+            </div>
+          </h2>
+        </div>
+        <div class="four wide column">
+          <h2 class="ui header">
+            <i class="user plus icon"></i>
+            <div class="content">
+              People
+              <div class="sub header">Connect with poetry enthusiasts</div>
+            </div>
+          </h2>
+        </div>          
+        <div class="four wide column">
+          <h2 class="ui header">
+            <i class="compass icon"></i>
+            <div class="content">
+              Discover
+              <div class="sub header">Find interesing original poems </div>
+            </div>
+          </h2>
+        </div>
+        <div class="four wide column">
+          <h2 class="ui header">
+            <i class="comment icon"></i>
+            <div class="content">
+              Conversation
+              <div class="sub header">Join conversations</div>
+            </div>
+          </h2>
+        </div>
+      </div>        
+    </div>
+</div>      
+
+<div class="ui vertical stripe segment" style="text-align: center;">
+  <div class="ui text container">
+    <h2>Create your account and start publishing, it's quick and easy. </h2>
+    <a class="ui huge brand-btn button" href="{% url 'account_signup' %}">Get Started <i class="right arrow icon"></i></a>
+    <p style="padding-top: 1em;">
+      Already have an account? <a href="{% url 'account_login' %}">Login</a>
+    </p>
+  </div>
+</div> 
+{% endblock %}

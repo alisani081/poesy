@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %} Welcome - @{{ user.username }} {% endblock %}
+
+{% block body %}
+<div class="ui grid">    
+    <div style="margin: 0 auto; padding: 0 auto; height: auto; width: 700px;">  
+        <h4 class="ui dividing header" style="margin-top: 20px;">Profile Details</h4>   
+        <form class="ui segment form" style="margin-top: 30px;" method="POST">
+            {{ form.non_field_errors }}
+            {% csrf_token %}
+            {% for field in user_form %}
+                <div class="required field">                                
+                    {{ field.errors }}                          
+                    <label>{{ field.label }}</label>
+                    <div class="ui input {% if field.errors %}error{% endif %}">    
+                        {{field}} 
+                    </div>
+                </div>
+            {% endfor %}            
+            <div class="field">
+                {{ profile_form.location.errors }}
+                <label>{{ profile_form.location.label }}</label>
+                {{ profile_form.location }}
+            </div>
+            <div class="field">
+                {{ profile_form.bio.errors }}
+                <label>
+                    {{ profile_form.bio.label }} </span>
+                    <div style="float: right; color: #9b7786;">
+                        <span class="char-count">160</span>/160
+                    </div>
+                </label>                
+                {{ profile_form.bio }}
+            </div>
+            <button type="submit" class="ui blue fluid button">Continue <i class="arrow alternate circle right outline icon"></i></button>
+        </form>        
+    </div>
+</div>  
+<script>
+    $(document).ready(function() {
+        $(".char-textarea").on("keyup",function(event){
+            checkTextAreaMaxLength(this,event);
+        });
+        function checkTextAreaMaxLength(textBox, e) { 
+            var maxLength = parseInt($(textBox).data("length"));  
+            if (textBox.value.length > maxLength - 1) textBox.value = textBox.value.substring(0, maxLength); 
+            $(".char-count").html(maxLength - textBox.value.length);            
+            return true; 
+        }
+        
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'landing/landing_base.html' %}
+{% load static %}
+{% block title %}Support{% endblock %}
+
+{% block rightMenu %}
+{% if user.is_authenticated %}    
+<div class="right menu">                
+    <div class="item">
+        <div class="ui pointing top right dropdown profiledropdown">
+            {% if user.profile.image %}
+                <img style="margin-right: 1.14286em;" class="ui circular image small-avatar" src="{{ user.profile.image }}" width="32px" height="32px">   
+            {% else %}    
+                <img style="margin-right: 1.14286em;" class="ui circular image" src="{% static 'images/default_avatar.png' %}" width="32px" height="32px">
+            {% endif %}                        
+            <div class="menu">
+                <div class="header" style="text-transform:none;"> 
+                    <a href="{% url 'profile' user.username %}">
+                        <h5 style="margin-bottom: 0px; color: #4a7059;">{{ user.get_full_name }}</h5>
+                        <p style="color: rgba(0,0,0,.44);">@{{ user.username }}</p>
+                    </a>
+                </div>                             
+                <div class="divider"></div>
+                <a href="{% url 'add_poem' %}" class="item">
+                    Write a poem
+                </a>
+                <a href="{% url 'bookmarks' user.username %}" class="item">
+                    My Bookmarks
+                </a>
+                <a class="item" href="{% url 'edit_profile' %}">                                 
+                    Settings
+                </a>                             
+                <a class="item" href="{% url 'contact' %}">
+                    Submit Feedback
+                </a>  
+                <a class="item" id="logout_btn">
+                    Logout
+                </a>
+            </div>
+        </div>
+        <!-- Logout Modal -->
+        <div class="ui tiny modal">
+            <i class="close icon"></i>
+            <div class="header">
+                Logout
+              </div>
+            <div class="content">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="actions">
+                <div class="ui negative button">
+                  No
+                </div>                             
+                <form method="POST" action="{% url 'account_logout' %}" class="ui button" style="background: none;">
+                    {% csrf_token %}
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                    {% endif %}
+                    <button type="submit" class="ui positive right labeled icon button">
+                        Yes
+                        <i class="checkmark icon"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- Logout Model Ends -->
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="ui container">
+    <div class="ui breadcrumb" style="margin: 7em 0 2em 0;">
+        <a class="section">Home</a>
+        <i class="right angle icon divider"></i>
+        <div class="active section">Support</div>
+    </div>
+</div>
+<div class="ui container">
+    <div style="font-size: large; line-height: normal;">
+        Do you have a complain, report, suggestion or feedback? Kindly fill out the form below. 
+    </div>
+    {% if message %}
+        <div class="ui message">
+            {{ message }}
+        </div>
+    {% endif %}
+    <form class="ui form" style="padding: 2em 0;" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}        
+        <button class="ui button brand-btn" type="submit">Submit</button> 
+      </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('.profiledropdown')
+            .dropdown();        
+        
+        $("#logout_btn").click(function(){
+            $(".tiny.modal").modal('show');
+        });
+        $(".tiny.modal").modal({
+            closable: true
+        });       
+    });
+</script>
+{% endblock %}

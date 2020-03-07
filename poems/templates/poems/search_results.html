@@ -1,0 +1,18 @@
+{% load static %}
+<div class="ui aligned divided selection list">
+    {% for user in results %}     
+        <a href="/@{{ user.username }}" class="item">
+        {% if user.profile.image %}
+            <img class="ui avatar image" src="{{ user.profile.image }}" width="48" height="48">
+        {% else %}
+            <img class="ui avatar image" src="{% static 'images/default_avatar.png' %}" width="48" height="48">
+        {% endif %}
+        <div class="content" style="padding: 0 0 0 .5em;">
+            <div class="header" style="font-size:small; color: rgba(0,0,0,.87); font-weight: 700;">{{ user.get_full_name }}</div>
+            @{{ user.username }} 
+        </div>
+        </a>
+    {% empty %}
+    <p style="text-align: center;">No search results</p>
+    {% endfor %}
+</div>

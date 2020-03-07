@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+
+{% block rightMenu %}
+    <span class="item">Have an account? </span> 
+        <div class="item" style="margin-right: 1.14286em;">
+        <a class="ui blue mini button" href="{% url 'account_login' %}">Login</a>
+    </div>
+{% endblock %}
+
+{% block body %}
+
+<div class="ui grid stackable container">        
+  <div class="nine wide column computer tablet only" >
+      <div>
+        <h1>Discover Poesy</h1>
+        <div class="description">Welcome to Poesy where words matter. On Poesy, you will find amazing poems written by creative and wonderful poets.</div>
+      </div>        
+      <div>  
+          <img src="{% static 'images/illustration_1.png' %}" alt="Illustration">
+      </div>
+   </div>   
+  <div class="seven wide column">            
+      <div>
+        <div class="content" style="text-align: center;">
+          <h1>{% trans "Sign Up" %}</h1>
+          <div class="description">
+            People can't wait to read your poems.
+          </div>
+          <div class="ui divider"></div>
+          <div class="column">                    
+              <form class="ui form" method="POST" action="{% url 'account_signup' %}"> 
+                  {{ form.non_field_errors }}
+                  {% csrf_token %}
+                  {% for field in form %}
+                      <div class="field">                                
+                          {{field.errors}}                          
+                          <div class="ui left icon input {% if field.errors %}error{% endif %}">    
+                              {{field}}   
+                              <i class="{% if field.label == 'E-mail' %} envelope {% elif field.label == 'Username' %}  user {% else %} lock {% endif %} icon"></i>
+                          </div>
+                      </div>
+                  {% endfor %}
+                  <button class="ui fluid blue submit button">Sign up</button>
+                  {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                  {% endif %}                           
+              </form>
+              <div class="ui horizontal divider">OR</div> 
+              <p>
+                <a href="{% provider_login_url 'facebook' method='oauth2' %}" class="ui fluid facebook button">
+                  <i class="facebook icon"></i>
+                  Continue with Facebook
+                </a>
+              </p>
+              <p>
+                <a href="{% provider_login_url 'google' process='login' %}" class="ui google plus fluid button">
+                  <i class="google icon"></i>
+                  Sign up with Google
+                </a>               
+              </p>               
+              <div class="description" style="padding-top: 10px;">
+                  <p>
+                      Already have an account?
+                      <a href="{% url 'account_login' %}">Login</a>
+                  </p>                           
+              </div>  
+          </div>                    
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

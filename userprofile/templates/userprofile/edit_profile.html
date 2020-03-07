@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %} {% trans "Settings" %} {% endblock %}
+
+{% block body %}
+<div class="ui grid">    
+    <div class="center-content">
+        <h2 style="margin-top: 20px;">{% trans "Settings" %}</h2>
+        <!-- Menu -->
+        <div class="ui fluid vertical menu" style="color: #1678c2;">
+            <a class="item active" href="{% url 'edit_profile' %}">{% trans "Edit Profile" %}</a>
+            <a class="item" href="{% url 'account_change_password' %}">{% trans "Change Password" %}</a>
+            <a class="item" href="{% url 'account_email' %}">{% trans "Change E-mail Address" %}</a>
+        </div>
+        <!-- Menu ends here -->
+        <h3 class="ui dividing header" style="margin-top: 30px;">Edit Profile</h3>
+        <form method="POST" enctype="multipart/form-data" style="width: auto;">
+            <div class="avatar-upload">
+                <div class="avatar-edit">
+                    <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" class="file"/>
+                    <label for="imageUpload"><i class="plus icon" style="margin-left: 7px; margin-top:5px; color:#aeb4b7;"></i></label>
+                </div>
+                <div class="avatar-preview">
+                    
+                    <div id="imagePreview" 
+                    {% if user.profile.image %}
+                        style="background-image: url({{ user.profile.image }});"
+                    {% else %}
+                        style="background-image: url(/static/myUsers/images/default_avatar.png);"
+                    {% endif %}
+                    >
+                    </div>
+                </div>      
+            </div>
+            <div class="ui mini blue button" style="margin-top: 10px; width: inherit;" id="js-uploadpic">Upload Picture</div>
+            <div class="ui basic mini red button {% if not user.profile.image %} disabled {% endif %}" style="margin-top: 10px; width: inherit; float: right;" id="js-deletepic">Remove Picture</div>
+        </form>        
+        <form method="POST" class="ui segment form" style="margin-bottom: 30px;">            
+            {{ user_form.non_field_errors }}
+            {{ profile_form.non_field_errors }}
+            {% csrf_token %}            
+            {% for field in user_form %}
+                <div class="required field">                                
+                    {{ field.errors }}                          
+                    <label>{{ field.label }}</label>
+                    <div class="ui input {% if field.errors %}error{% endif %}">    
+                        {{field}} 
+                    </div>
+                </div>
+            {% endfor %}            
+            <div class="field">
+                {{ profile_form.location.errors }}
+                <label>{{ profile_form.location.label }}</label>
+                {{ profile_form.location }}
+            </div>
+            <div class="field">
+                {{ profile_form.bio.errors }}
+                <label>
+                    {{ profile_form.bio.label }}  
+                    <div style="float: right; color: #9b7786;">
+                        <span class="char-count">{{ user.profile.bio|length }}</span>/160
+                    </div>
+                </label>                
+                {{ profile_form.bio }}
+            </div>
+            <button class="ui blue fluid button">{% trans "Save" %}</button>
+        </form>
+    </div>
+</div> 
+<script>
+$(document).ready(function() {
+    $(".char-textarea").on("keyup",function(event){
+        checkTextAreaMaxLength(this,event);
+    });
+    function checkTextAreaMaxLength(textBox, e) { 
+        var maxLength = parseInt($(textBox).data("length"));  
+        if (textBox.value.length > maxLength - 1) textBox.value = textBox.value.substring(0, maxLength); 
+        $(".char-count").html(maxLength - textBox.value.length);            
+        return true; 
+    }        
+    $('.avatar-preview').click(function(){
+        $('.file').click()
+    });
+});
+</script>
+{% endblock %}

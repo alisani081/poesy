@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Home {% endblock %}
+
+{% block rightMenu %}
+    <a href="{% url 'account_signup' %}" class="item">Sign up</a>
+    <a href="{% url 'account_login' %}" class="item" style="margin-right: 1.14286em;">Login</a> 
+{% endblock %}
+
+{% block body %} 
+<div class="ui grid stackable container">        
+    <div class="nine wide column computer tablet only"> 
+        <div>
+            <h1>Discover Poesy</h1>
+            <div class="description">Poesy where words matter. On Poesy, you will find amazing poems written by creative and wonderful poets.</div>
+            <div class="ui list">
+                <div class="item">Write poems</div>
+                <div class="itme">Engage</div>
+            </div>
+        </div>
+        <div>  
+            <img src="{% static 'myUsers/images/welcome.png' %}" alt="Illustration">
+        </div>
+    </div> 
+    <div class="seven wide column">
+        <div class="ui segment">
+            <p>
+                <a class="ui blue fluid button" href="{% url 'account_signup' %}">Create Account</a>
+            </p>
+            <p>
+                <a class="ui blue fluid button" href="{% url 'account_login' %}">Login</a>
+            </p>
+        </div>
+    </div>
+</div>  
+{% endblock %}

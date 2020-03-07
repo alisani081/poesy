@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Search {% endblock %}
+{% block extrascript %}
+<script src=" {% static 'js/search.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="ui grid">    
+  <div style="margin: 0 auto; padding: 0 auto; height: auto; width: 700px;">  
+      <h2>Search</h2>
+      <p style="font-size: small; text-align: center;">Try searching for people...</p>     
+        <div class="ui fluid icon input search_input">
+          <input class="searchInp" type="text" placeholder="Try username or name..." name="q" required autofocus autocomplete="off">  
+          <i class="search icon"></i>          
+        </div>       
+      <div class="ui segment transition hidden">
+      </div>
+    </div>
+</div>    
+{% endblock %}
