@@ -70,7 +70,7 @@ div.center-content {
     background-position: center;
 }
 #illustraion {
-    background: url('images/illustration_1.png');
+    /* background: url('images/illustration_1.png'); */
     height: auto;
     width: 20%;
     background-repeat: no-repeat;
