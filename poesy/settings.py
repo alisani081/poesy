@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1wbws*tf8qb9#d-d=_(40gprrzh$v-9=n%2=79x4bru91v_ge^'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -159,11 +159,13 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_ADAPTER = 'userprofile.adapter.MyAccountAdapter'
 
 # Cloudinary Config
-cloudinary.config (
-    cloud_name = 'alisani081',
-    api_key = '386377671754814',
-    api_secret = 'ghWOyu621utt9KGEHF2rxPGY3XY'
-)
+# cloudinary.config (
+#     # cloud_name = 'alisani081',
+#     # api_key = '386377671754814',
+#     # api_secret = 'ghWOyu621utt9KGEHF2rxPGY3XY'
+#     os.getenv("CLOUDINARY_URL")
+# )
+CLOUDINARY_URL=os.getenv("CLOUDINARY_URL")
 
 # Security
 SESSION_COOKIE_SECURE = True
@@ -171,7 +173,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 # ADMINS - Email Server Errors to Admin
-[('Ali Sani', 'poesy.app@gmail.com')]
+[('Ali Sani', 'alisani081@yahoo.com')]
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
