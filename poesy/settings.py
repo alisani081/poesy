@@ -116,9 +116,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
     # {
     #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     # },
@@ -157,20 +157,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email' 
 ACCOUNT_ADAPTER = 'userprofile.adapter.MyAccountAdapter'
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 
-# Cloudinary Config
-# cloudinary.config (
-#     # cloud_name = 'alisani081',
-#     # api_key = '386377671754814',
-#     # api_secret = 'ghWOyu621utt9KGEHF2rxPGY3XY'
-#     os.getenv("CLOUDINARY_URL")
-# )
 CLOUDINARY_URL=os.getenv("CLOUDINARY_URL")
 
 # Security
 SESSION_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
 CSRF_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
 
 # ADMINS - Email Server Errors to Admin
 [('Ali Sani', 'alisani081@yahoo.com')]
