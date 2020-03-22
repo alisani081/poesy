@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-import django_heroku
 import os
 import cloudinary
 
@@ -21,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = '1wbws*tf8qb9#d-d=_(40gprrzh$v-9=n%2=79x4bru91v_ge^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -98,10 +97,10 @@ WSGI_APPLICATION = 'poesy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'poesy',
-        'USER': 'alisani',
-        'PASSWORD': '37277079',
-        'HOST': '127.0.0.1',
+        'NAME': 'd856p3mtijd4v3',
+        'USER': 'beejqaesjsoroz',
+        'PASSWORD': 'c44f039e805c0ca3648e1711a25a3e5cfbbeaf586588164e50ac14900e5c6b23',
+        'HOST': 'ec2-3-230-106-126.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -170,4 +169,4 @@ CSRF_COOKIE_SECURE = True
 [('Ali Sani', 'alisani081@yahoo.com')]
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
