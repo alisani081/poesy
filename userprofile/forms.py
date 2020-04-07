@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from userprofile.models import Profile
 from django import forms
+from allauth.account.forms import SignupForm
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -41,3 +42,12 @@ class ContactForm(forms.Form):
     email = forms.EmailField(required=True)
     subject = forms.CharField(required=True)
     message = forms.CharField(widget=forms.Textarea, required=True)
+
+class MyCustomSignupForm(SignupForm):
+    def __init__(self, *args, **kwargs):
+        super(MyCustomSignupForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({
+            'autofocus': 'autofocus'
+        }), self.fields['password1'].widget.attrs.update({
+            'minlength': 8
+        })

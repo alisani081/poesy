@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 import os
 import cloudinary
+import json
+
+with open('/etc/poesy-config.json') as config_file:
+    config = json.load(config_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,13 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1wbws*tf8qb9#d-d=_(40gprrzh$v-9=n%2=79x4bru91v_ge^'
+SECRET_KEY = config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['www.poesy.com.ng', 'poesy.com.ng', '95.179.193.158']
 
 # Application definition
 
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'userprofile',
     'poems',
+    'django.contrib.humanize',
 
     'django.contrib.sites',
     'allauth',
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
+    'django.contrib.sitemaps',
 ]
 
 
@@ -97,11 +102,11 @@ WSGI_APPLICATION = 'poesy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd856p3mtijd4v3',
-        'USER': 'beejqaesjsoroz',
-        'PASSWORD': 'c44f039e805c0ca3648e1711a25a3e5cfbbeaf586588164e50ac14900e5c6b23',
-        'HOST': 'ec2-3-230-106-126.compute-1.amazonaws.com',
-        'PORT': '5432',
+        'NAME': config.get('DB_NAME'),
+        'USER': config.get('DB_USER'),
+        'PASSWORD': config.get('DB_PASSWORD'),
+        'HOST': config.get('DB_HOST'),
+        'PORT': config.get('DB_PORT'),
     }
 }
 
@@ -152,13 +157,21 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # All-Auth configuration
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email' 
 ACCOUNT_ADAPTER = 'userprofile.adapter.MyAccountAdapter'
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+ACCOUNT_FORMS = {'signup': 'userprofile.forms.MyCustomSignupForm'}
 
-CLOUDINARY_URL=os.getenv("CLOUDINARY_URL")
+# Email Config
+DEFAULT_FROM_EMAIL = 'no-reply@poesy.com.ng'
+SENDGRID_API_KEY = config.get('SENDGRID_API_KEY')
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = config.get('SENDGRID_API_KEY')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Security
 SESSION_COOKIE_SECURE = True
@@ -168,5 +181,14 @@ CSRF_COOKIE_SECURE = True
 # ADMINS - Email Server Errors to Admin
 [('Ali Sani', 'alisani081@yahoo.com')]
 
-# Activate Django-Heroku.
-# django_heroku.settings(locals())
+# Cloudinary Config
+cloudinary.config( 
+  cloud_name = config.get('CLOUD_NAME'), 
+  api_key = config.get('CLOUD_API_KEY'), 
+  api_secret = config.get('CLOUD_SECRET_KEY')
+)
+
+# CELERY STUFF
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'

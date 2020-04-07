@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from poems.models import Poem
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -79,3 +80,29 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class Notification(models.Model):
+    recipient = models.ForeignKey(User,
+                            related_name='notifications',
+                            on_delete=models.CASCADE,
+                            verbose_name='Notification receiver')
+    actor = models.ForeignKey(User,
+                            related_name='notify_actor',
+                            on_delete=models.CASCADE,
+                            verbose_name='Actor')
+    verb = models.CharField(max_length=50, 
+                            verbose_name='Verb of the action')
+    extra = models.ForeignKey(Poem, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Target Object')
+    read = models.BooleanField(default=False,
+                               verbose_name='Read status')
+    deleted = models.BooleanField(default=False,
+                                  verbose_name='Soft delete status')
+    created = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    class Meta(object):
+        ordering = ('-created', )
+    
+    def __str__(self):       
+        return f"{self.recipient} - {self.actor} {self.verb} at {self.created}"
+    

@@ -14,6 +14,6 @@ class PoemForm(forms.ModelForm):
                 'placeholder': 'Your Poem Title'
             }),
             'content': forms.Textarea(attrs={ 
-                'placeholder': 'Compose your epic poem...'
+                'placeholder': 'Compose your poem...'
             }),            
         }

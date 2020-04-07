@@ -6,11 +6,20 @@ from django.core.mail import send_mail
 from .forms import UserForm, ProfileForm, ContactForm
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from userprofile.models import Profile
+from userprofile.models import Profile, Notification
 from poems.models import Poem
-
 from django.views.decorators.csrf import csrf_exempt
 import cloudinary as cloudinary
+from django.template.loader import render_to_string
+from .tasks import send_notify_task
+
+# Notification View
+@login_required
+def notification_view(request):
+    context = {
+        'notifications': Notification.objects.filter(recipient=request.user,deleted=False)
+    }
+    return render(request, 'userprofile/notification.html', context)
 
 # Welcome View
 @login_required
@@ -100,17 +109,16 @@ def follow(request, user):
             follower.follow(followee)    
             data = {
                 'success': True   
-            }
-            send_mail(
-                f'{follower.user.username} just followed you. Check out his profile.',
-                f'''Hello {followee.user.first_name},
-                    @{follower.user.username} just followed you. Click here to visit their profile.
-                ''',
-                'no-reply@localhost',
-                [f'{followee.user.email}'],
-                fail_silently=False,
+            }            
+            send_notify_task.delay(
+                recipient_mail=followee.user.email,
+                recipient_firstname=followee.user.first_name,
+                message=f'@{follower.user.username} just followed you. Click view for more.',
+                actor_username=follower.user.username,
+                notify_verb='followed you'
             )
         return JsonResponse(data)
+    raise Http404
 
 def unfollow(request, user):   
     if request.is_ajax():  
@@ -129,6 +137,7 @@ def unfollow(request, user):
                 'success': True   
             }
         return JsonResponse(data)
+    raise Http404
 
 def bookmark(request, poem):
     if request.is_ajax():
@@ -147,6 +156,7 @@ def bookmark(request, poem):
                 'success': True   
             }
         return JsonResponse(data)
+    raise Http404
 
 def unbookmark(request, poem):
     if request.is_ajax():
@@ -165,6 +175,7 @@ def unbookmark(request, poem):
                 'success': False   
             }
         return JsonResponse(data)
+    raise Http404
 
 def like(request, poem):
     if request.is_ajax():
@@ -181,17 +192,17 @@ def like(request, poem):
             data = {
                 'success': True,
                 'likes': poem.liked_by.count()
-            }
-            send_mail(
-                f'@{user_profile.user.username} just liked your poem.',
-                f'''Hello {poem.poet.user.first_name},
-                    @{user_profile.user.username} just liked your poem. {poem.title}.
-                ''',
-                'no-reply@localhost',
-                [f'{poem.poet.user.email}'],
-                fail_silently=False,
+            }  
+            send_notify_task.delay(
+                recipient_mail=poem.poet.user.email,
+                recipient_firstname=poem.poet.user.first_name,
+                message=f'@{user_profile.user.username} just liked your poem ({poem.title}). Click view for more.',
+                actor_username=user_profile.user.username,
+                notify_verb='liked your poem',
+                notify_extra=poem.id
             )
         return JsonResponse(data)
+    raise Http404
 
 def unlike(request, poem):
     if request.is_ajax():
@@ -210,6 +221,7 @@ def unlike(request, poem):
                 'success': False   
             }
         return JsonResponse(data)
+    raise Http404
 
 @csrf_exempt
 def delete_picture(request):
@@ -292,6 +304,18 @@ def upload_picture(request):
         return JsonResponse(data)
     raise Http404
 
+@login_required
+def mark_as_read(request):
+    request.user.notifications.filter(read=False).update(read=True)
+    messages.success(request, 'All Notifications Marked as read!')
+    return redirect('notification')
+        
+@login_required
+def delete_notification(request):
+    request.user.notifications.filter(deleted=False).update(deleted=True)
+    messages.success(request, 'All Notifications deleted successfully!')
+    return redirect('notification')    
+
 def about_view(request):
     return render(request, 'landing/about.html')
 
@@ -307,10 +331,10 @@ def contact_view(request):
             Contact Form on Poesy.com.ng
             """
             try:
-                send_mail(subject, message, from_email, ['admin@example.com'])
+                send_mail(subject, message, from_email, ['alisani081@yahoo.com'], fail_silently=True)
                 message = 'Your message was sent successfully!'
             except:
-                message = 'Invalid header found.'
+                message = 'Error! Please try again!'
             return render(request, 'landing/contact.html', {'message': message, 'form': ContactForm()})
         else:
             message = 'Please, fill out the form properly.'
@@ -318,3 +342,9 @@ def contact_view(request):
     form = ContactForm()
 
     return render(request, 'landing/contact.html', {'form': form})
+
+def privacy_view(request):
+    return render(request, 'landing/privacy.html')
+
+def manifest_view(request):
+    return render(request, 'manifest.json')

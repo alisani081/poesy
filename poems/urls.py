@@ -1,8 +1,14 @@
 from django.urls import path
-
+from django.contrib.sitemaps.views import sitemap
+from . sitemaps import PostSitemap
 from . import views
 
-urlpatterns = [    
+sitemaps = {
+    'posts': PostSitemap
+}
+
+urlpatterns = [   
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
     path('<username>/poem/<slug:slug>', views.poem_view, name='poem'),
     path('topic/<topic>', views.poems_view, name='topic'),
     path('search', views.search_view, name='search'),

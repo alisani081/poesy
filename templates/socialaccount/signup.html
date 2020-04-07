@@ -3,6 +3,9 @@
 {% load i18n %}
 
 {% block title %}{% trans "Signup" %}{% endblock %}
+{% block rightMenu %} 
+    <a class="item" href="{% url 'account_login' %}" style="margin-right: 1.14286em;">Login</a>
+{% endblock %}
 
 {% block body %}
 <div class="ui grid">    

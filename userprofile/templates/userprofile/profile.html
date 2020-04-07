@@ -112,11 +112,11 @@ div.ui.mini.button {
                             </div>
                         </div>
                 {% empty %}   
-                    <div class="card" style="width: 700px; margin: 0 auto; text-align: center; border: none;">
-                        <p style="padding: 20px 0 20px 0;">
+		    <!-- <div class="card" style="width: 350px; margin: 0 auto; text-align: center; border: none;"> -->
+                        <p style="padding: 20px 0 20px 0; text-align:center;">
                             @{{user_profile.username}} haven't published a poem yet.
                         </p>                            
-                    </div>                 
+                    <!-- </div> -->
                 {% endfor %}
             </div> 
             <!-- Cards end here -->
@@ -163,11 +163,11 @@ div.ui.mini.button {
                             </div>
                         </div>
                 {% empty %}   
-                    <div class="card" style="width: 700px; margin: 0 auto; text-align: center; border: none;">
-                        <p style="padding: 20px 0 20px 0;">
+		    <!-- <div class="card" style="width: 700px; margin: 0 auto; text-align: center; border: none;"> -->
+                        <p style="padding: 20px 0 20px 0; text-align: center;">
                             @{{user_profile.username}} haven't liked a poem yet.
                         </p>                            
-                    </div>                 
+                    <!-- </div> -->
                 {% endfor %}
             </div> 
             <!-- Cards end here -->

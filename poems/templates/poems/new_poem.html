@@ -2,6 +2,16 @@
 
 {% block title %} Publish a Poem {% endblock %}
 
+{% block extrascript %} 
+<style>
+    @media only screen and (max-width: 600px) {
+        .tox .tox-toolbar--scrolling { 
+            flex-wrap: wrap !important;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 
 <div class="ui grid">    
@@ -36,7 +46,10 @@
     $(document).ready(function() {
         $('.ui.dropdown')
         .dropdown();
-        
+	
+	$('#id_content')
+            .removeAttr('required')
+	        
     tinymce.init({
         selector: 'textarea',
         menubar: 'file'      

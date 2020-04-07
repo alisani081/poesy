@@ -38,9 +38,16 @@
                         </a>                         
                     {% endif %}
                 {% endif %}
-                <a class="item" href="#" style="margin-left: 1.5em; margin-right: 1.5em;"><i class="twitter icon"></i></a>
-                <a class="item" href="#"><i class="whatsapp icon"></i></a> 
-            </div>          
+                <a class="item" href="https://twitter.com/share?text={{ poem.title }}&url=https://poesy.com.ng{% url 'poem' poem.poet poem.slug %}&hashtags=poesydotcomdotng,poem" style="margin-left: 1.5em; margin-right: 1.5em;">
+                    <i class="twitter icon"></i>
+                </a>
+                <a class="item" href="https://wa.me/?text=https://poesy.com.ng{% url 'poem' poem.poet poem.slug %}" target="_blank">
+                    <i class="whatsapp icon"></i>
+                </a> 
+                <a class="item" href="https://www.facebook.com/sharer/sharer.php?u=https://poesy.com.ng{% url 'poem' poem.poet poem.slug %}" style="margin-left: 1.5em; margin-right: 1.5em;" target="_blank">
+                    <i class="facebook icon"></i>
+                </a>
+            </div>
         </div>
         <div class="topHeader" style="margin-top: 15px;">            
             <div class="ui divider"></div>
@@ -72,8 +79,12 @@
                                 <a><i class="bookmark outline icon js-bookmarkBtn" data-bookmark="{{ poem.pk }}"></i></a> 
                             {% endif %}
                         {% endif %}                        
-                        <a href="#" style="margin-right: 10px; margin-left: 10px;"><i class="whatsapp icon"></i></a>
-                        <a href="#"><i class="twitter icon"></i></a>                        
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://poesy.com.ng{% url 'poem' poem.poet poem.slug %}" style="margin-right: 10px; margin-left: 10px;" target="_blank">
+                            <i class="facebook icon"></i>
+                        </a>
+                        <a href="https://twitter.com/share?text={{ poem.title }}&url=https://poesy.com.ng{% url 'poem' poem.poet poem.slug %}&hashtags=poesydotcomdotng,poem" target="_blank">
+                            <i class="twitter icon"></i>
+                        </a>                        
                     </div>
                     <div class="extra">
                         <div class="left floated meta" style="font-size: small; margin-top: 10px;">{{ poem.published_at|date }}</div>
@@ -83,7 +94,7 @@
             </div>
             <div class="ui divider"></div>
         </div> 
-        <div class="poem-body" style="margin-bottom: 100px;">
+        <div class="poem-body" style="margin-bottom: 50px;">
             <div class="poem" style="padding: 1em 1em;">
                 {% autoescape off %}
                     {{ poem.content }}
@@ -93,8 +104,8 @@
                 <div class="extra content">
                     {% if user.is_authenticated %}
                         {% if poem in user.profile.poems.all %}
-                            <a href="{% url 'edit_poem' poem.slug %}">Edit <i class="edit icon"></i></a>
-                            <!-- Delete <a href="{% url 'edit_poem' poem.slug %}"><i class="trash icon"></i></a> -->
+                            <a href="{% url 'edit_poem' poem.slug %}" style="padding-right: 100px;">Edit <i class="edit icon"></i></a>
+                            <!-- <a href="{% url 'edit_poem' poem.slug %}"><i class="trash red icon"></i></a> -->
                         {% endif %}
                     {% endif %} 
                     <!-- <a><i class="comment outline icon"></i></a>                    -->

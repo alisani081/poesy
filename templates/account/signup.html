@@ -46,6 +46,7 @@
                       </div>
                   {% endfor %}
                   <button class="ui fluid blue submit button">Sign up</button>
+		  <p style="font-size: small; padding: 5px;">By clicking Sign up above, you agree to our <a href="{% url 'privacy' %}">Privacy Policy & Terms of Service</a>
                   {% if redirect_field_value %}
                     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
                   {% endif %}                           

@@ -1,6 +1,8 @@
 html, body {
     /* font-family: Georgia, 'Times New Roman', Times, serif !important; */
     /* font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important; */
+    font-family: 'Amaranth', sans-serif;
+    font-family: 'Titillium Web', sans-serif;
     font-size: medium;
     line-height: 1.5;
     color: #222f3e !important;
@@ -162,9 +164,26 @@ input[type="search"], select {
 #topicsTable {
     box-shadow: 0 0 0 0 transparent inset !important;
 }
+.ui.menu .item > .floating.label { 
+    top: 15px !important; 
+    border-radius: 100% !important;
+}
+.ui.label {
+    line-height: 1.5 !important;
+}
+.ui.tiny.label, .ui.tiny.labels .label {
+    font-size: .51428571rem !important;
+}
+.ui.menu .item > .label {   
+    padding: .1em .6em !important;
+}
 @media screen and (max-width: 769px) {
+    .ui.list .list > .item > .content, .ui.list > .item > .content .notify {
+        width: 18px;
+        font-size: 0.9em;
+    }
     #logo {
-        height: 40px;
+        height: 30px;
         width: auto;
     }
     #shareIcons.right.floated.meta {

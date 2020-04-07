@@ -33,3 +33,7 @@ class Poem(models.Model):
         else:  # create
             self.slug = generate_unique_slug(Poem, self.title)
         super(Poem, self).save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        return f"/{self.poet}/poem/{self.slug}"
+

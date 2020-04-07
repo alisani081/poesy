@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load socialaccount %}
 {% load i18n %}
 
 {% block title %} Login {% endblock %} 
@@ -61,13 +61,13 @@
         </div>
         <div class="ui horizontal divider">OR</div> 
             <p>
-              <a href="{# provider_login_url 'facebook' method='oauth2' #}" class="ui fluid facebook button">
+              <a href="{% provider_login_url 'facebook' method='oauth2' %}" class="ui fluid facebook button">
                 <i class="facebook icon"></i>
                 Continue with Facebook
               </a>               
             </p>
             <p>               
-              <a href="{# provider_login_url 'google' process='login' #}" class="ui google plus fluid button">
+              <a href="{% provider_login_url 'google' process='login' %}" class="ui google plus fluid button">
                 <i class="google icon"></i>
                 Login with Google
               </a>

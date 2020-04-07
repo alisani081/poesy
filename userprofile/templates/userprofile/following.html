@@ -20,7 +20,7 @@
                 <i class="arrow left icon"></i>
             </a>
             <div class="user_details">
-                <h2 style="margin-bottom: 0px; padding: 0px; font-size: 19px; color: rgba(0,0,0,.87);">{{ user_profile.get_full_name }}</h2>
+                <h2 style="margin-bottom: 0px; padding: 0px; font-size: 16.5px; color: rgba(0,0,0,.87);">{{ user_profile.get_full_name }}</h2>
                 <span style="color: rgba(0, 0, 0, 0.54); padding-top: 0px; margin-top:0px; font-size: small;">@{{ user_profile.username }}</span>
             </div>
         </div>   
@@ -45,7 +45,11 @@
                             {% endif %}
                         {% endif %}
                     </div>
-                    <img class="ui avatar image" src="{% static 'images/avi.JPG' %}">
+                    {% if follower.image %}
+                        <img class="ui avatar image" src="{{ follower.image }}" width="48px" height="48px">
+                    {% else %}
+                        <img class="ui avatar image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                    {% endif %} 
                     <a href="{% url 'profile' follower.user.username %}" class="content">                    
                         <div class="header">{{ follower.user.get_full_name }}</div>
                         <span style="color: rgba(0,0,0,.54);">@{{ follower.user.username }}</span>                         
@@ -87,8 +91,12 @@
                                 <div class="ui mini basic follow button js-follow_btn" data-follow="{{ following.id }}">Follow</div>
                             {% endif %}
                         {% endif %}
-                    </div>                    
-                    <img class="ui avatar image" src="{% static 'images/avi.JPG' %}">
+                    </div> 
+                    {% if following.image %}
+                        <img class="ui avatar image" src="{{ following.image }}" width="48px" height="48px">
+                    {% else %}
+                        <img class="ui avatar image" src="{% static 'images/default_avatar.png' %}" width="48px" height="48px">
+                    {% endif %}
                     <a href="{% url 'profile' following.user.username %}" class="content" href="{% url 'profile' following.user.username %}">                    
                         <div class="header full_name">{{ following.user.get_full_name }} </div>
                         <span style="color: rgba(0,0,0,.54);">@{{ following.user.username }}</span> 
@@ -99,7 +107,7 @@
                             {% endif %}
                     </a>                  
                     <a href="{% url 'profile' following.user.username %}" class="description" style="padding-left: 45px; padding-top: 5px;">
-                        {{ following.bio|truncatewords:15 }}
+                        {{ following.bio|truncatewords:10 }}
                     </a>
                 </div>
                 {% empty %}
