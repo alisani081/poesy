@@ -270,7 +270,7 @@ def upload_picture(request):
     if request.is_ajax():
         user_profile = get_object_or_404(Profile, user=request.user)    
         data = dict()
-        pub_id = f'userprofile/profile_pictures/{request.user.username}_avi'
+        pub_id = f'userprofile/profile_pictures/{request.user.username}_picture'
 
         picture = request.POST.get('picture')
         file_ext =  request.POST.get('ext')

@@ -11,10 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 import os
 import cloudinary
-import json
+from dotenv import load_dotenv
+load_dotenv()
 
-with open('/etc/poesy-config.json') as config_file:
-    config = json.load(config_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,12 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.poesy.com.ng', 'poesy.com.ng', '95.179.193.158']
+ALLOWED_HOSTS = ['poesy.onrender.com']
 
 # Application definition
 
@@ -102,11 +101,11 @@ WSGI_APPLICATION = 'poesy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config.get('DB_NAME'),
-        'USER': config.get('DB_USER'),
-        'PASSWORD': config.get('DB_PASSWORD'),
-        'HOST': config.get('DB_HOST'),
-        'PORT': config.get('DB_PORT'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -165,10 +164,10 @@ ACCOUNT_FORMS = {'signup': 'userprofile.forms.MyCustomSignupForm'}
 
 # Email Config
 DEFAULT_FROM_EMAIL = 'no-reply@poesy.com.ng'
-SENDGRID_API_KEY = config.get('SENDGRID_API_KEY')
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = config.get('SENDGRID_API_KEY')
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -176,16 +175,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Security
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 
 # ADMINS - Email Server Errors to Admin
-[('Ali Sani', 'alisani081@yahoo.com')]
+[(os.environ.get('ADMIN_NAME'), os.environ.get('ADMIN_EMAIL'))]
 
 # Cloudinary Config
 cloudinary.config( 
-  cloud_name = config.get('CLOUD_NAME'), 
-  api_key = config.get('CLOUD_API_KEY'), 
-  api_secret = config.get('CLOUD_SECRET_KEY')
+  cloud_name = os.environ.get('CLOUD_NAME'), 
+  api_key = os.environ.get('CLOUD_API_KEY'), 
+  api_secret = os.environ.get('CLOUD_SECRET_KEY')
 )
 
 # CELERY STUFF
